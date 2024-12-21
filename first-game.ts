@@ -5,6 +5,8 @@
 var inputs: string[] = readline().split(' ');
 const width: number = parseInt(inputs[0]); // columns in the game grid
 const height: number = parseInt(inputs[1]); // rows in the game grid
+var turnNum: number = 0;
+var latestOwnId: number = 0;
 
 // game loop
 while (true) {
@@ -45,9 +47,10 @@ while (true) {
         const owner: number = parseInt(inputs[3]); // 1 if your organ, 0 if enemy organ, -1 if neither
         
         if (owner === 1) {
-            console.error(x, y, type, organId, organDir, organParentId, organRootId);
+            // console.error(x, y, type, organId, organDir, organParentId, organRootId);
             myEntities.push(new OrganismPart(x, y, type, organId, organDir, organParentId, organRootId));
-            console.error(myEntities.length);
+            // goes in ascending order
+            latestOwnId = organId;
         }
     }
     var inputs: string[] = readline().split(' ');
@@ -61,10 +64,28 @@ while (true) {
     const oppC: number = parseInt(inputs[2]);
     const oppD: number = parseInt(inputs[3]); // opponent's protein stock
     const requiredActionsCount: number = parseInt(readline()); // your number of organisms, output an action for each one in any order
-    for (let i = 0; i < requiredActionsCount; i++) {
+    
+    // get organ on furthest to the right
+    var idToMove = 0;
+    var furthestX = 0;
+    var organY = 0;
+    for (let i = 0; i < myEntities.length; i++) {
         var entity = myEntities[i];
-        console.error(`${entity.x}, ${entity.y}`);
-
-        console.log('WAIT');
+        if (entity.x >= furthestX) {
+            furthestX = entity.x;
+            organY = entity.y;
+            idToMove = entity.organId;
+        }
+        // console.error(`${entity.x}, ${entity.y}`);
     }
+
+    var yModifications = [0, 0, -1, 0, ];
+    if (turnNum === 3) {
+        console.log('GROW ' + latestOwnId + ' ' + (furthestX) + ' ' + (organY - 1) + ' ' + 'BASIC');
+    }
+    else {
+        console.log('GROW ' + latestOwnId + ' ' + (furthestX + 1) + ' ' + organY + ' ' + 'BASIC');
+    }
+
+    turnNum++;
 }
